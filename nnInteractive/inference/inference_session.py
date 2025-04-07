@@ -31,7 +31,7 @@ class nnInteractiveInferenceSession():
                  verbose: bool = False,
                  torch_n_threads: int = 8,
                  do_autozoom: bool = True,
-                 use_pinned_memory: bool = True,
+                 use_pinned_memory: bool = False,
                  ):
         """
         Only intended to work with nnInteractiveTrainerV2 and its derivatives
