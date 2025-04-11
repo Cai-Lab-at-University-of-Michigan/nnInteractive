@@ -383,17 +383,19 @@ class nnInteractiveInferenceSession():
                 if not self.do_autozoom:
                     initial_zoom_out_factor = 1
 
-                initial_zoom_out_factor = min(initial_zoom_out_factor, 4)
+                initial_zoom_out_factor = min(initial_zoom_out_factor, 3)
                 zoom_out_factor = initial_zoom_out_factor
                 max_zoom_out_factor = initial_zoom_out_factor
 
                 start_autozoom = time()
-                while zoom_out_factor is not None and zoom_out_factor <= 4:
-                    print('Performing prediction at zoom out factor', zoom_out_factor)
+                while zoom_out_factor is not None and zoom_out_factor <= 3:
                     max_zoom_out_factor = max(max_zoom_out_factor, zoom_out_factor)
                     # initial prediction at initial_zoom_out_factor
                     scaled_patch_size = [round(i * zoom_out_factor) for i in self.configuration_manager.patch_size]
+                    # cap z dim to 192 for the sake of GPU VRAM
+                    scaled_patch_size[2] = self.configuration_manager.patch_size[2]
                     scaled_bbox = [[c - p // 2, c + p // 2 + p % 2] for c, p in zip(prediction_center, scaled_patch_size)]
+                    print('Performing prediction at zoom out factor', zoom_out_factor, scaled_patch_size, scaled_bbox)
 
                     crop_img, pad = crop_to_valid(self.preprocessed_image, scaled_bbox)
                     crop_img = crop_img.to(self.device, non_blocking=self.device.type == 'cuda')
