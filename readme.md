@@ -2,9 +2,19 @@
 
 # Python backend for `nnInteractive: Redefining 3D Promptable Segmentation`
 
-This repository contains the nnInteractive python backend for our 
-[napari plugin](https://github.com/MIC-DKFZ/napari-nninteractive) and [MITK integration](https://www.mitk.org/wiki/MITK-nnInteractive). It can be used for 
-python-based inference.
+This repository provides the official Python backend for `nnInteractive`, a state-of-the-art framework for 3D promptable segmentation. It is designed for seamless integration into Python-based workflows—ideal for researchers, developers, and power users working directly with code.
+
+`nnInteractive` is also available through graphical viewers (GUI) for those who prefer a visual workflow. The napari and MITK integrations are developed and maintained by our team. Thanks to the community for contributing the 3D Slicer extension!
+
+
+<div align="center">
+
+| **<div align="center">[napari plugin](https://github.com/MIC-DKFZ/napari-nninteractive)</div>** | **<div align="center">[MITK integration](https://www.mitk.org/wiki/MITK-nnInteractive)</div>** | **<div align="center">[3D Slicer extension](https://github.com/coendevente/SlicerNNInteractive)</div>** |
+|-------------------|----------------------|-------------------------|
+| [<img src="imgs/Logos/napari.jpg" height="200">](https://github.com/MIC-DKFZ/napari-nninteractive) | [<img src="imgs/Logos/mitk.jpg" height="200">](https://www.mitk.org/wiki/MITK-nnInteractive) | [<img src="imgs/Logos/3DSlicer.png" height="200">](https://github.com/coendevente/SlicerNNInteractive) |
+
+</div>
+
 
 
 ## What is nnInteractive?
@@ -180,6 +190,20 @@ session.set_target_buffer(torch.zeros(NEW_IMAGE.shape[1:], dtype=torch.uint8))
 
 # Enjoy!
 ```
+
+## nnInteractive SuperVoxels
+
+As part of the `nnInteractive` framework, we provide a dedicated module for **supervoxel generation** based on [SAM](https://github.com/facebookresearch/segment-anything) and [SAM2](https://github.com/facebookresearch/sam2). This replaces traditional superpixel methods (e.g., SLIC) with **foundation model–powered 3D pseudo-labels**.
+
+🔗 **Module:** [`nnInteractive/supervoxel/`](nnInteractive/supervoxel)
+
+The SuperVoxel module allows you to:
+
+- Automatically generate high-quality 3D supervoxels via axial sampling + SAM segmentation and SAM2 mask propagation.
+- Use the generated supervoxels as **pseudo-ground-truth labels** to train promptable 3D segmentation models like `nnInteractive`.
+- Export `nnUNet`-compatible `.pkl` foreground prompts for downstream use.
+
+For detailed installation, configuration, and usage instructions, check the [SuperVoxel README](nnInteractive/supervoxel/README.md).
 
 
 ## Citation
