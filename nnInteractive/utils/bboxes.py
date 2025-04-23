@@ -6,6 +6,23 @@ import numpy as np
 import torch
 
 
+def sum_by_chunks(tensor, chunk_size=128):
+    """Compute sum of a large tensor by processing it in chunks."""
+    total = 0
+    for x_start in range(0, tensor.shape[0], chunk_size):
+        x_end = min(x_start + chunk_size, tensor.shape[0])
+        for y_start in range(0, tensor.shape[1], chunk_size):
+            y_end = min(y_start + chunk_size, tensor.shape[1])
+            for z_start in range(0, tensor.shape[2], chunk_size):
+                z_end = min(z_start + chunk_size, tensor.shape[2])
+                
+                # Process this chunk
+                chunk = tensor[x_start:x_end, y_start:y_end, z_start:z_end]
+                total += chunk.sum().item()
+    
+    return total
+
+
 def generate_bounding_boxes(mask, bbox_size=(192, 192, 192), stride: Union[List[int], Tuple[int, int, int], str] = (16, 16, 16), margin=(10, 10, 10), max_depth=5, current_depth=0):
     """
     Generate overlapping bounding boxes to cover a 3D binary segmentation mask using PyTorch tensors.
@@ -125,7 +142,7 @@ def generate_bounding_boxes(mask, bbox_size=(192, 192, 192), stride: Union[List[
 
     # Step 5: Recursively cover remaining voxels using uncovered as the mask
     if uncovered.any():
-        if uncovered.sum() < np.prod([i // 3 for i in bbox_size]):
+        if sum_by_chunks(uncovered) < np.prod([i // 3 for i in bbox_size]):
             # print('random fallback')
             bboxes.extend(random_sampling_fallback(uncovered, bbox_size, margin, 25))
         else:
